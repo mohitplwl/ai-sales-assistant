@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>What Should I Say? - AI Sales Assistant</title>
+</head>
+<body>
+  <h1>AI Sales Assistant</h1>
+  <form id="messageForm">
+    <label for="userMessage">Paste your message:</label><br>
+    <textarea id="userMessage" rows="6" cols="60"></textarea><br><br>
+    <label for="context">Optional context (e.g., follow-up after demo):</label><br>
+    <textarea id="context" rows="3" cols="60"></textarea><br><br>
+    <button type="submit">Rewrite My Message</button>
+  </form>
+  <div id="output"></div>
+
+  <script>
+    document.getElementById('messageForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const message = document.getElementById('userMessage').value;
+      const context = document.getElementById('context').value;
+      const response = await fetch('/rewrite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, context })
+      });
+      const data = await response.json();
+      const output = document.getElementById('output');
+      output.innerHTML = '';
+      data.versions.forEach((version) => {
+        const div = document.createElement('div');
+        div.innerHTML = `<h3>${version.tone}</h3><p>${version.text}</p>`;
+        output.appendChild(div);
+      });
+    });
+  </script>
+</body>
+</html>
